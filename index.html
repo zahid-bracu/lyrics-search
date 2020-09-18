@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Hard Rock Solution - Song Lyric App</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+      crossorigin="anonymous"
+    />
+    <!-- Custom css -->
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .resultBox {
+        max-width: 100%;
+        background-color: rgba(243, 243,243,.4);
+         
+        padding: 10px;
+        margin: 20px;
+        border-radius: 10px;
+      }
+    </style>
+    
+</head>
+
+<body>
+    <div class="container">
+        <nav id="top" class="navbar  navbar-dark my-3">
+            <a class="navbar-brand" href="#">
+                <img src="https://i.ibb.co/sR3szFF/festivalclaca-cat-new-instagram-logo-white-392704.png" style="width: 60px;" alt="Hard Rock Solution">
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavId" aria-controls="collapsibleNavId" aria-expanded="false" aria-label="Toggle navigation">
+                <img src="images/toggler-icon.svg" alt="">
+            </button>
+            <div class="collapse navbar-collapse" id="collapsibleNavId">
+                <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Link</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdownId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownId">
+                            <a class="dropdown-item" href="#">Action 1</a>
+                            <a class="dropdown-item" href="#">Action 2</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Search Section -->
+        <main class="content-area">
+            <div class="search-bar col-md-6 mx-auto">
+                <h1 class="text-center">Lyrics Search</h1>
+                <div class="search-box my-5">
+                    <input type="text" id="searchbox" class="form-control" placeholder="Enter your artist song name">
+                    <button class="btn btn-success search-btn" id="search">Search</button>
+                </div>
+            </div>
+            <div id="lyrics-header" class="text-center">
+
+            </div>
+            <div id="lyrics" class="text-center">
+
+            </div>
+
+            <!-- === Simple results === -->
+            <div id="searchresult">
+
+            </div>
+             
+
+        </main>
+    </div>
+    <script>
+        document.getElementById("searchresult").innerHTML=""
+    var search=document.getElementById("search")
+    
+    search.addEventListener("click",function()
+    {
+        var title=document.getElementById("searchbox").value;
+        console.log(title);
+        fetch(`https://api.lyrics.ovh/suggest/${title}`)
+        .then(response => response.json())
+        .then(json =>display(json.data))
+    }
+    )
+    
+    function display(data){
+        fetchData=data;
+        var innerDisplay='';
+        for(var i=0;i<data.length;i++){
+            var album=data[i].title;
+            var singer=data[i].artist.name;
+            var img=data[i].album.cover_big;
+            var play=data[i].preview;
+            console.log(singer);
+            console.log(album);
+            innerDisplay+=`
+            <div>
+                <div class="resultBox row align-items-center">
+                    <div class="d-flex align-items-center col-lg-10 col-md-6 col-sm-12 col-12">
+                        <div id="img" style="margin:0px 10px;" >
+                            <img
+                            src="${img}"
+                            style="max-width: 100px;"
+                            />
+                        </div>
+                        <div id="info">
+                            <h4>${album}</h4>
+                            <h3>${singer}</h3>
+
+                            <a href="${play}" style="color:white;text-decoration:none" target="blank_"><button class="btn btn-warning">Play</button></a>
+                        </div>
+                    </div>
+                    <div id="lyrics col-lg-2 col-md-4 offset-md-4 col-sm-12 col-12">
+                       <a href="#top"> <button  onClick="getLyrics(${i})" class="btn btn-primary my-2 ml-4">Get Lyrics</button> </a>
+                         
+                    </div>
+                </div>
+                 
+            </div>
+                `
+            
+        }
+        document.getElementById("searchresult").innerHTML=innerDisplay;
+    }
+
+    function hideLyrics(){
+        document.getElementById("lyrics").innerText="";
+        document.getElementById("lyrics-header").innerHTML=`<div></div>`
+    }
+
+
+    function getLyrics(i){
+        var artist=fetchData[i].artist.name;
+        var title=fetchData[i].title;
+        fetch(`https://api.lyrics.ovh/v1/${artist}/${title}`)
+            .then(response => response.json())
+            .then(json =>{
+                const lyrics=json.lyrics;
+                var lyricsHeader=`
+                <div>
+                    <button onClick="hideLyrics()" class="btn btn-danger my-3">Go Back</button>
+                    <h1>${title}</h1>
+                    <h2>${artist}</h2>
+                </div>
+                `
+                
+                if(lyrics!=null){
+                    document.getElementById("lyrics-header").innerHTML=lyricsHeader;
+                    document.getElementById("lyrics").innerText=lyrics;
+                }else{
+                    document.getElementById("lyrics-header").innerHTML=`<h3>Lyrics Not Found</h3>`
+                }
+                
+            })
+            
+    }
+
+
+    document.getElementById("clear").addEventListener("click",function(){
+        document.getElementById("searchresult").innerHTML=``;
+    })
+
+
+
+
+
+    </script>
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+      integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+      integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+      crossorigin="anonymous"
+    ></script>
+    <!-- Custom Script Here -->
+
+</body>
+
+</html>
