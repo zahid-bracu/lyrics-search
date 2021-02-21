@@ -99,6 +99,7 @@
     
     function display(data){
         fetchData=data;
+        console.log(data);
         var innerDisplay='';
         for(var i=0;i<data.length;i++){
             var album=data[i].title;
@@ -111,12 +112,7 @@
             <div>
                 <div class="resultBox row align-items-center">
                     <div class="d-flex align-items-center col-lg-10 col-md-6 col-sm-12 col-12">
-                        <div id="img" style="margin:0px 10px;" >
-                            <img
-                            src="${img}"
-                            style="max-width: 100px;"
-                            />
-                        </div>
+                        
                         <div id="info">
                             <h4>${album}</h4>
                             <h3>${singer}</h3>
@@ -125,8 +121,7 @@
                         </div>
                     </div>
                     <div id="lyrics col-lg-2 col-md-4 offset-md-4 col-sm-12 col-12">
-                       <a href="#top"> <button  onClick="getLyrics(${i})" class="btn btn-primary my-2 ml-4">Get Lyrics</button> </a>
-                         
+                       <a href="#top"> <button  onClick="getLyrics(${i})" class="btn btn-primary my-2 ml-3">Get Lyrics</button> </a>
                     </div>
                 </div>
                  
@@ -199,3 +194,11 @@
 </body>
 
 </html>
+
+
+<!-- <div id="img" style="margin:0px 10px;" >
+    <img
+    src="${img}"
+    style="max-width: 100px;"
+    />
+</div> -->
